@@ -35,7 +35,7 @@ Execute below commands in CloudShell
 - Network: my-awesome-vpc-network
 - Targets: Specified Target Tags
 - Target Tags: my-awesome-app-server-public
-- Source IP Ranges: 130.211.0.0/22, 35.191.0.0/16
+- Source IP Ranges: 130.211.0.0/22, 35.191.0.0/16  #Search for "gcp external load balancer ip range" in google
 - Ports: TCP:8080
 
 ---
@@ -46,7 +46,7 @@ Execute below commands in CloudShell
 - Click on Frontends
 - Click on my-awesome-app-load-balancer-front-end-public
 - Copy External IP Address
-- Go to http://<<External_IP_Address>>
+- Go to http://<<External_IP_Address> of LB>
 
 ---
 
@@ -69,13 +69,13 @@ Execute below commands in CloudShell
   - Type: Tag
   - Tag: app-name
   - Operator: Equals
-  - Value: my-awesome-app
+    - Value: my-awesome-app
 
 ---
 
 ### Create Uptime Check
 
-- Go to Monitoring&rarr;Uptime Checks
+- Go to Monitoring (Synthetic monitoring)&rarr;Uptime Checks
 - Click on Create Uptime Check
 - Target:
   - Protocol: HTTP

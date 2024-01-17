@@ -7,31 +7,31 @@ data "google_compute_default_service_account" "default" {
 
 resource "google_compute_network" "vpc_network" {
   project                 = data.external.env.result["project"]
-  name                    = "my-awesome-vpc-network"
+  name                    = "my-vpc-network"
   auto_create_subnetworks = false
   mtu                     = 1460
 }
 
 resource "google_compute_subnetwork" "subnetwork_1" {
-  name          = "my-awesome-vpc-sub-network-1"
+  name          = "my-vpc-sub-network-1"
   ip_cidr_range = "10.0.0.0/24"
   network       = google_compute_network.vpc_network.id
 }
 
 resource "google_compute_subnetwork" "subnetwork_2" {
-  name          = "my-awesome-vpc-sub-network-2"
+  name          = "my-vpc-sub-network-2"
   ip_cidr_range = "10.0.1.0/24"
   network       = google_compute_network.vpc_network.id
 }
 
 resource "google_compute_instance_template" "inst_template_public" {
-  name_prefix = "my-awesome-app-inst-template-public"
+  name_prefix = "my-app-inst-template-public"
   labels = {
-    app-name         = "my-awesome-app"
+    app-name         = "my-app"
     server-visiblity = "public"
   }
 
-  tags = ["my-awesome-app-server-public"]
+  tags = ["my-app-server-public"]
 
   disk {
     source_image = "ubuntu-os-cloud/ubuntu-2204-jammy-v20230606"
@@ -62,8 +62,8 @@ resource "google_compute_instance_template" "inst_template_public" {
 }
 
 resource "google_compute_region_instance_group_manager" "mig_public" {
-  name               = "my-awesome-app-managed-instance-group-public"
-  base_instance_name = "my-awesome-app-server-public"
+  name               = "my-app-managed-instance-group-public"
+  base_instance_name = "my-app-server-public"
 
 
   version {
@@ -72,7 +72,7 @@ resource "google_compute_region_instance_group_manager" "mig_public" {
   target_size = 1
 
   named_port {
-    name = "my-awesome-app-port"
+    name = "my-app-port"
     port = 8080
   }
 
@@ -89,9 +89,9 @@ resource "google_compute_firewall" "ssh_from_iap_range" {
 }
 
 resource "google_compute_backend_service" "backend_service_public" {
-  name                  = "my-awesome-app-load-balancer-backend-public"
+  name                  = "my-app-load-balancer-backend-public"
   protocol              = "HTTP"
-  port_name             = "my-awesome-app-port"
+  port_name             = "my-app-port"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   timeout_sec           = 10
   enable_cdn            = false
@@ -104,7 +104,7 @@ resource "google_compute_backend_service" "backend_service_public" {
 }
 
 resource "google_compute_health_check" "health_check_public" {
-  name = "my-awesome-app-load-balancer-hc-public"
+  name = "my-app-load-balancer-hc-public"
   # request_path        = "/"
   # port                = "8080"
   check_interval_sec  = 1
@@ -118,18 +118,18 @@ resource "google_compute_health_check" "health_check_public" {
 }
 
 resource "google_compute_target_http_proxy" "target_http_proxy_public" {
-  name    = "my-awesome-app-load-balancer-proxy-public"
+  name    = "my-app-load-balancer-proxy-public"
   url_map = google_compute_url_map.compute_url_map_public.id
 }
 
 
 resource "google_compute_url_map" "compute_url_map_public" {
-  name            = "my-awesome-app-load-balancer-public"
+  name            = "my-app-load-balancer-public"
   default_service = google_compute_backend_service.backend_service_public.id
 }
 
 resource "google_compute_global_forwarding_rule" "forwarding_rule_public" {
-  name                  = "my-awesome-app-load-balancer-front-end-public"
+  name                  = "my-app-load-balancer-front-end-public"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   port_range            = "80"
